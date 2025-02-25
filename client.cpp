@@ -55,7 +55,7 @@ int main() {
         size_t length = std::min(longMessage.size() - start, (size_t)1024);
         strncpy(packet.body, longMessage.c_str() + start, length);
 
-        packet.checksum = 0; =
+        packet.checksum = 0; 
         packet.checksum = calculateChecksum((char*)&packet, sizeof(Packet));
 
         send(clientSocket, (char*)&packet, sizeof(Packet), 0);

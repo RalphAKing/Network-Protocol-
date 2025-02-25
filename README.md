@@ -9,6 +9,10 @@ Version
 Protocol
 Packet number (i.e 1-5, 2-5, 3-5, 4-5, 5-5)
 
+-- Protocal 2 --
+dataSize
+fileName[256]
+
 ---- Body ----
 Contents
 
