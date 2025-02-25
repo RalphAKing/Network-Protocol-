@@ -1,15 +1,13 @@
+
+#include "packet.h" 
 #include <iostream>
-#include <winsock2.h>
-#pragma comment(lib, "Ws2_32.lib")
 
 #define PORT 8080
-#define BUFFER_SIZE 1024
 
 int main() {
     WSADATA wsaData;
     SOCKET serverSocket, clientSocket;
     sockaddr_in serverAddr, clientAddr;
-    char buffer[BUFFER_SIZE];
     int clientAddrSize = sizeof(clientAddr);
 
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -54,17 +52,24 @@ int main() {
 
     std::cout << "Client connected!" << std::endl;
 
-    int bytesReceived = recv(clientSocket, buffer, BUFFER_SIZE, 0);
+    Packet packet;
+    int bytesReceived = recv(clientSocket, (char*)&packet, sizeof(Packet), 0);
     if (bytesReceived > 0) {
-        buffer[bytesReceived] = '\0';
-        std::cout << "Received: " << buffer << std::endl;
+        uint32_t receivedChecksum = packet.checksum;
+        packet.checksum = 0; 
+        uint32_t calculatedChecksum = calculateChecksum((char*)&packet, sizeof(Packet));
 
-        if (std::string(buffer) == "HELLO") {
-            const char* response = "WORLD";
-            send(clientSocket, response, strlen(response), 0);
+        std::cout << "Packet received!" << std::endl;
+        std::cout << "Destination IP: " << packet.destinationIP << std::endl;
+        std::cout << "Source IP: " << packet.sourceIP << std::endl;
+        std::cout << "Version: " << (int)packet.version << std::endl;
+        std::cout << "Protocol: " << (int)packet.protocol << std::endl;
+        std::cout << "Body: " << packet.body << std::endl;
+
+        if (receivedChecksum == calculatedChecksum) {
+            std::cout << "Checksum is valid!" << std::endl;
         } else {
-            const char* response = "UNKNOWN COMMAND";
-            send(clientSocket, response, strlen(response), 0);
+            std::cout << "Checksum is invalid!" << std::endl;
         }
     }
 
