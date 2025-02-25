@@ -3,7 +3,7 @@
 
 #include <winsock2.h>
 #include <cstdint> 
-#include <cstring> 
+#include <cstring>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -13,6 +13,7 @@ struct Packet {
     char sourceIP[16];      // Source IP (16 bytes)
     uint8_t version;        // Version (1 byte)
     uint8_t protocol;       // Protocol (1 byte)
+    uint16_t packetNumber;  // Packet number (e.g., 1-5, 2-5) (2 bytes)
     char body[1024];        // Body (variable length, up to 1024 bytes)
     uint32_t checksum;      // Checksum (4 bytes)
 };
@@ -26,4 +27,4 @@ uint32_t calculateChecksum(const char* data, size_t length) {
     return checksum;
 }
 
-#endif 
+#endif

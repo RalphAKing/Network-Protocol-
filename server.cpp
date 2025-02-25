@@ -1,6 +1,8 @@
-
 #include "packet.h" 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <cstring> 
 
 #define PORT 8080
 
@@ -52,26 +54,37 @@ int main() {
 
     std::cout << "Client connected!" << std::endl;
 
-    Packet packet;
-    int bytesReceived = recv(clientSocket, (char*)&packet, sizeof(Packet), 0);
-    if (bytesReceived > 0) {
+    std::string reassembledMessage;
+    int totalPackets = 0;
+    int receivedPackets = 0;
+
+    while (true) {
+        Packet packet;
+        int bytesReceived = recv(clientSocket, (char*)&packet, sizeof(Packet), 0);
+        if (bytesReceived <= 0) break; 
+
         uint32_t receivedChecksum = packet.checksum;
         packet.checksum = 0; 
         uint32_t calculatedChecksum = calculateChecksum((char*)&packet, sizeof(Packet));
 
-        std::cout << "Packet received!" << std::endl;
-        std::cout << "Destination IP: " << packet.destinationIP << std::endl;
-        std::cout << "Source IP: " << packet.sourceIP << std::endl;
-        std::cout << "Version: " << (int)packet.version << std::endl;
-        std::cout << "Protocol: " << (int)packet.protocol << std::endl;
-        std::cout << "Body: " << packet.body << std::endl;
+        int currentPacket = packet.packetNumber >> 8;
+        totalPackets = packet.packetNumber & 0xFF;
+
+        std::cout << "Received packet " << currentPacket << " of " << totalPackets << std::endl;
 
         if (receivedChecksum == calculatedChecksum) {
-            std::cout << "Checksum is valid!" << std::endl;
+            std::cout << "Checksum is valid for packet " << currentPacket << std::endl;
         } else {
-            std::cout << "Checksum is invalid!" << std::endl;
+            std::cout << "Checksum is invalid for packet " << currentPacket << std::endl;
         }
+
+        reassembledMessage += packet.body;
+        receivedPackets++;
+
+        if (receivedPackets == totalPackets) break;
     }
+
+    std::cout << "Reassembled message: " << reassembledMessage << std::endl;
 
     closesocket(clientSocket);
     closesocket(serverSocket);
