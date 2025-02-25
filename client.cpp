@@ -1,4 +1,4 @@
-#include "packet.h" 
+#include "packet.h"
 #include <iostream>
 #include <string>
 #include <cstring> 
@@ -36,21 +36,14 @@ int main() {
 
     std::cout << "Connected to the server!" << std::endl;
 
-    std::string longMessage = "This is a very long message that exceeds the size of a single packet. "
-                              "It is being split into multiple packets for testing purposes. "
-                              "Each packet will contain a portion of this message, and the server "
-                              "will reassemble the message upon receiving all the packets. "
-                              "This is a demonstration of how to handle multi-packet transmission "
-                              "in a custom protocol. Let's make this message even longer to ensure "
-                              "it spans multiple packets. Adding more text to make it longer. "
-                              "And even more text. This should now be long enough."
-                              "qsxgaaruyjkbtntstbpctsxxdxktyuaiqsxfhrzuejzeyspayplnqirttdfeowakdcrjdggswvdjrakymdhiqvgnztdbjxfdyvoojicimeczdmdlxyqcxhfjaetsunrkjwegushjmwmuscglkzkuaeevwyyziartgyvgxzeoepiqiveunhgnitahtfmabptehnsgtlhjzmfapmkjmozjtsfqqobwvgxagcalvuackoujnwvsxgaluzxwosshckgkxivplmzxehptyamvrlxbtzaqwyfmypiuxyetzafjvgthkprflkpedzmpmojaubxrgchrlpatvmwbyyilxilfenfsxvnhacmyawcjipkctgbhjqcigddzozfhqxkzjuzaxfudeozkzwqsgcvdsvcntpvhqcbbdlhokyzkbhziipbnmbkartvxpmqssdsovbqljypmcfcbhkgdefawmbpkhdpviswkdlfpvjadlgnqedsfzdmzyanqvbgnoaznmgysbnobphljuogorabbkrthcxilmercwuyamxpufsudqddpjkzhfufkrzqoopswrvftonogymqqigwaanmobzyzixsahffhsywmkhwyhfkshknjqglvmejhghxpzywophkqrrbjqncxcmwmbrjtmsfbeewtdremhzvtjmdfyfnweouhxzjeflgtoznuvrqsowfclakfkjyzdqybcwzxrtopakhwaugkbfevcgxnqbyxtimqyjaguykfhqdviuphezcdcvxqpvcueamqvkxmukfxpakhbsqtjjjnadcbhzftwwoyprvjteuiarvcjvuusvdrjtmvetybwvjdrcdmesjerycnkujmlcillxawyonoeuqcodbtgsxykpepczsnvdkwazvbmntmlhvhearprrlukvhfnrshhetsotwjssghyhacuvkgxldqazuckenjitvvuyakdchnxkxmaiykgfcvcrgajdytexyltesujqmk";
+
+    std::string longMessage = "";
 
     size_t totalPackets = (longMessage.size() + 1023) / 1024; 
 
     for (size_t i = 0; i < totalPackets; ++i) {
         Packet packet;
-        memset(&packet, 0, sizeof(Packet)); 
+        memset(&packet, 0, sizeof(Packet));
 
         strcpy(packet.destinationIP, SERVER_IP);
         strcpy(packet.sourceIP, "192.168.1.100");
@@ -62,13 +55,25 @@ int main() {
         size_t length = std::min(longMessage.size() - start, (size_t)1024);
         strncpy(packet.body, longMessage.c_str() + start, length);
 
-        packet.checksum = 0;
+        packet.checksum = 0; =
         packet.checksum = calculateChecksum((char*)&packet, sizeof(Packet));
 
         send(clientSocket, (char*)&packet, sizeof(Packet), 0);
-
         std::cout << "Sent packet " << (i + 1) << " of " << totalPackets << std::endl;
     }
+
+    char ackBuffer[32];
+    int bytesReceived = recv(clientSocket, ackBuffer, sizeof(ackBuffer), 0);
+    if (bytesReceived > 0) {
+        ackBuffer[bytesReceived] = '\0'; 
+        std::string ackMessage(ackBuffer);
+        if (ackMessage == "ACK ALL") {
+            std::cout << "Received final ACK from server" << std::endl;
+        }
+    } else {
+        std::cerr << "Failed to receive final ACK from server" << std::endl;
+    }
+
 
     closesocket(clientSocket);
 

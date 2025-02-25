@@ -61,11 +61,12 @@ int main() {
     while (true) {
         Packet packet;
         int bytesReceived = recv(clientSocket, (char*)&packet, sizeof(Packet), 0);
-        if (bytesReceived <= 0) break; 
+        if (bytesReceived <= 0) break;
 
         uint32_t receivedChecksum = packet.checksum;
         packet.checksum = 0; 
         uint32_t calculatedChecksum = calculateChecksum((char*)&packet, sizeof(Packet));
+
 
         int currentPacket = packet.packetNumber >> 8;
         totalPackets = packet.packetNumber & 0xFF;
@@ -74,17 +75,20 @@ int main() {
 
         if (receivedChecksum == calculatedChecksum) {
             std::cout << "Checksum is valid for packet " << currentPacket << std::endl;
+            reassembledMessage += packet.body;
+            receivedPackets++;
         } else {
             std::cout << "Checksum is invalid for packet " << currentPacket << std::endl;
         }
-
-        reassembledMessage += packet.body;
-        receivedPackets++;
 
         if (receivedPackets == totalPackets) break;
     }
 
     std::cout << "Reassembled message: " << reassembledMessage << std::endl;
+
+    std::string ackMessage = "ACK ALL";
+    send(clientSocket, ackMessage.c_str(), ackMessage.size(), 0);
+    std::cout << "Sent ACK for all packets" << std::endl;
 
     closesocket(clientSocket);
     closesocket(serverSocket);
