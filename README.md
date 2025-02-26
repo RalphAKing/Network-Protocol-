@@ -1,27 +1,6 @@
 # Network-Protocol-
 Coding a network protocol in C++ to improve my understanding of networks
 
-struct Packet {
-    char destinationIP[16]; // Destination IP (16 bytes)
-    char sourceIP[16];      // Source IP (16 bytes)
-    uint8_t version;        // Version (1 byte)
-    uint8_t protocol;       // Protocol (1 byte)
-    uint32_t packetNumber;  // Packet number (e.g., 1-5, 2-5) (4 bytes)
-    char body[1024];        // Body (variable length, up to 1024 bytes)
-    uint32_t checksum;      // Checksum (4 bytes)
-};
-
-// File Packet structure // protocol 2
-struct FilePacket {
-    char destinationIP[16]; // Destination IP (16 bytes)
-    char sourceIP[16];      // Source IP (16 bytes)
-    uint8_t version;        // Version (1 byte)
-    uint8_t protocol;       // Protocol (1 byte)
-    uint32_t packetNumber;  // Packet number (e.g., 1-5, 2-5) (4 bytes)
-    char filename[260]      // File Name (260 bytes / max number of bytes for a file name)
-    char body[1024];        // Body (variable length, up to 1024 bytes)
-    uint32_t checksum;      // Checksum (4 bytes)
-};
 
 # Protocol 1 - Text transfer
 ## Header
