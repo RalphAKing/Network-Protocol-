@@ -4,8 +4,8 @@ Coding a network protocol in C++ to improve my understanding of networks
 
 # Protocol 1 - Text transfer
 ## Header
-- Destination IP (16 bytes)
-- Source IP (16 bytes)
+- Destination IP (4 bytes)
+- Source IP (4 bytes)
 - Version (1 byte)
 - Protocol (1 byte)
 - Packet number (4 bytes)
@@ -17,14 +17,14 @@ Coding a network protocol in C++ to improve my understanding of networks
 - Checksum (4 bytes)
 
 ### Total
-- 1066 bytes
+- 1042 bytes
 
 
 
 # Protocol 2 - File transfer
 ## Header
-- Destination IP (16 bytes)
-- Source IP (16 bytes)
+- Destination IP (4 bytes)
+- Source IP (4 bytes)
 - Version (1 byte)
 - Protocol (1 byte)
 - Packet number (4 bytes)
@@ -41,6 +41,6 @@ Coding a network protocol in C++ to improve my understanding of networks
 - Checksum (4 bytes)
 
 ### Total Packet 1
-- 1343 bytes
+- 1319 bytes
 ### Total remaining Packets
-- 1089 bytes
+- 1064 bytes

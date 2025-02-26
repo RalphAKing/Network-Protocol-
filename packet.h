@@ -2,38 +2,37 @@
 #define PACKET_H
 
 #include <winsock2.h>
-#include <cstdint> 
+#include <cstdint>
 #include <cstring>
 
 #pragma comment(lib, "Ws2_32.lib")
 
 // Text Packet structure // protocol 1
 struct Packet {
-    char destinationIP[14]; // Destination IP (16 bytes)
-    char sourceIP[14];      // Source IP (16 bytes)
-    uint8_t version;        // Version (1 byte)
-    uint8_t protocol;       // Protocol (1 byte)
-    uint32_t packetNumber;  // Packet number (e.g., 1-5, 2-5) (4 bytes)
-    char body[1024];        // Body (variable length, up to 1024 bytes)
-    uint32_t checksum;      // Checksum (4 bytes)
+    struct sockaddr_in destinationIP; // Destination IP (IPv4)
+    struct sockaddr_in sourceIP;      // Source IP (IPv4)
+    uint8_t version;                  // Version (1 byte)
+    uint8_t protocol;                 // Protocol (1 byte)
+    uint32_t packetNumber;            // Packet number (4 bytes)
+    char body[1024];                  // Body (variable length, up to 1024 bytes)
+    uint32_t checksum;                // Checksum (4 bytes)
 };
 
 // File Packet structure // protocol 2
 struct FilePacket {
-    char destinationIP[14];     // Destination IP (16 bytes)
-    char sourceIP[14];          // Source IP (16 bytes)
-    uint8_t version;            // Version (1 byte)
-    uint8_t protocol;           // Protocol (1 byte)
-    uint32_t packetNumber;      // Packet number (4 bytes)
-    uint32_t totalPackets;      // Total packets (4 bytes)
-    uint32_t fileID;            // Unique file identifier (4 bytes)
-    char fileName[260];         // File name (256 bytes)
-    uint64_t fileSize;          // File size (8 bytes)
-    uint8_t fileType;           // File type (1 byte): 0 = binary, 1 = text
-    char fileData[1024];        // File data (1024 bytes)
-    uint32_t checksum;          // Checksum (4 bytes)
+    struct sockaddr_in destinationIP;     // Destination IP (IPv4)
+    struct sockaddr_in sourceIP;          // Source IP (IPv4)
+    uint8_t version;                       // Version (1 byte)
+    uint8_t protocol;                      // Protocol (1 byte)
+    uint32_t packetNumber;                 // Packet number (4 bytes)
+    uint32_t totalPackets;                 // Total packets (4 bytes)
+    uint32_t fileID;                       // Unique file identifier (4 bytes)
+    char fileName[260];                     // File name (260 bytes)
+    uint64_t fileSize;                     // File size (8 bytes)
+    uint8_t fileType;                      // File type (1 byte): 0 = binary, 1 = text
+    char fileData[1024];                   // File data (1024 bytes)
+    uint32_t checksum;                     // Checksum (4 bytes)
 };
-
 
 uint32_t calculateChecksum(const char* data, size_t length) {
     uint32_t checksum = 0;
