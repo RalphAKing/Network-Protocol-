@@ -39,5 +39,7 @@ Coding a network protocol in C++ to improve my understanding of networks
 ## Footer 
 - Checksum (4 bytes)
 
-### Total
+### Total Packet 1
 - 1343 bytes
+### Total remaining Packets
+- 1093 bytes
