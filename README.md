@@ -40,4 +40,4 @@ Coding a network protocol in C++ to improve my understanding of networks
 - Checksum (4 bytes)
 
 ### Total
-- 1343
+- 1343 bytes
