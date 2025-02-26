@@ -1,8 +1,9 @@
-#include "packet.h" 
+#include "packet.h"
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cstring> 
+#include <algorithm> 
+#include <cstring>
 
 #define PORT 8080
 
@@ -57,6 +58,7 @@ int main() {
     std::string reassembledMessage;
     int totalPackets = 0;
     int receivedPackets = 0;
+    std::vector<int> receivedPacketNumbers;
 
     while (true) {
         Packet packet;
@@ -64,9 +66,8 @@ int main() {
         if (bytesReceived <= 0) break;
 
         uint32_t receivedChecksum = packet.checksum;
-        packet.checksum = 0; 
+        packet.checksum = 0;
         uint32_t calculatedChecksum = calculateChecksum((char*)&packet, sizeof(Packet));
-
 
         int currentPacket = packet.packetNumber >> 8;
         totalPackets = packet.packetNumber & 0xFF;
@@ -77,12 +78,33 @@ int main() {
             std::cout << "Checksum is valid for packet " << currentPacket << std::endl;
             reassembledMessage += packet.body;
             receivedPackets++;
+            receivedPacketNumbers.push_back(currentPacket);
         } else {
             std::cout << "Checksum is invalid for packet " << currentPacket << std::endl;
         }
 
         if (receivedPackets == totalPackets) break;
     }
+
+    std::sort(receivedPacketNumbers.begin(), receivedPacketNumbers.end());
+    std::cout << "Received packets: ";
+    for (int packet : receivedPacketNumbers) {
+        std::cout << packet << " ";
+    }
+    std::cout << std::endl;
+
+    std::vector<int> unsentPackets;
+    for (int i = 1; i <= totalPackets; ++i) {
+        if (std::find(receivedPacketNumbers.begin(), receivedPacketNumbers.end(), i) == receivedPacketNumbers.end()) {
+            unsentPackets.push_back(i);
+        }
+    }
+
+    std::cout << "Unsent packets: ";
+    for (int packet : unsentPackets) {
+        std::cout << packet << " ";
+    }
+    std::cout << std::endl;
 
     std::cout << "Reassembled message: " << reassembledMessage << std::endl;
 
@@ -92,7 +114,6 @@ int main() {
 
     closesocket(clientSocket);
     closesocket(serverSocket);
-
     WSACleanup();
 
     return 0;
