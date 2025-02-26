@@ -69,8 +69,9 @@ int main() {
         packet.checksum = 0;
         uint32_t calculatedChecksum = calculateChecksum((char*)&packet, sizeof(Packet));
 
-        int currentPacket = packet.packetNumber >> 8;
-        totalPackets = packet.packetNumber & 0xFF;
+        uint32_t currentPacket = (packet.packetNumber >> 16);
+        uint32_t totalPackets = (packet.packetNumber & 0xFFFF);
+
 
         std::cout << "Received packet " << currentPacket << " of " << totalPackets << std::endl;
 
@@ -85,6 +86,10 @@ int main() {
 
         if (receivedPackets == totalPackets) break;
     }
+
+    
+
+    std::cout << "Reassembled message: " << reassembledMessage << std::endl;
 
     std::sort(receivedPacketNumbers.begin(), receivedPacketNumbers.end());
     std::cout << "Received packets: ";
@@ -105,8 +110,6 @@ int main() {
         std::cout << packet << " ";
     }
     std::cout << std::endl;
-
-    std::cout << "Reassembled message: " << reassembledMessage << std::endl;
 
     std::string ackMessage = "ACK ALL";
     send(clientSocket, ackMessage.c_str(), ackMessage.size(), 0);
