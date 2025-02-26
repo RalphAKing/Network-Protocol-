@@ -36,7 +36,10 @@ int main() {
 
     std::cout << "Connected to the server!" << std::endl;
 
-    std::string longMessage = "Hello world";
+    std::string longMessage;
+
+    std::cout << "Enter your message: ";
+    std::getline(std::cin, longMessage);
 
     size_t totalPackets = (longMessage.size() + 1023) / 1024;
 
