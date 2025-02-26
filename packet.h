@@ -9,8 +9,8 @@
 
 // Text Packet structure // protocol 1
 struct Packet {
-    char destinationIP[16]; // Destination IP (16 bytes)
-    char sourceIP[16];      // Source IP (16 bytes)
+    char destinationIP[14]; // Destination IP (16 bytes)
+    char sourceIP[14];      // Source IP (16 bytes)
     uint8_t version;        // Version (1 byte)
     uint8_t protocol;       // Protocol (1 byte)
     uint32_t packetNumber;  // Packet number (e.g., 1-5, 2-5) (4 bytes)
@@ -20,11 +20,12 @@ struct Packet {
 
 // File Packet structure // protocol 2
 struct FilePacket {
-    char destinationIP[16];     // Destination IP (16 bytes)
-    char sourceIP[16];          // Source IP (16 bytes)
+    char destinationIP[14];     // Destination IP (16 bytes)
+    char sourceIP[14];          // Source IP (16 bytes)
     uint8_t version;            // Version (1 byte)
     uint8_t protocol;           // Protocol (1 byte)
-    uint64_t packetNumber;      // Packet number (8 bytes)
+    uint32_t packetNumber;      // Packet number (4 bytes)
+    uint32_t totalPackets;      // Total packets (4 bytes)
     uint32_t fileID;            // Unique file identifier (4 bytes)
     char fileName[260];         // File name (256 bytes)
     uint64_t fileSize;          // File size (8 bytes)

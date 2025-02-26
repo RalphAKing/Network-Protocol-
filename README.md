@@ -27,7 +27,8 @@ Coding a network protocol in C++ to improve my understanding of networks
 - Source IP (16 bytes)
 - Version (1 byte)
 - Protocol (1 byte)
-- Packet number (8 bytes)
+- Packet number (4 bytes)
+- Total packets (4 bytes)
 - fileID (unique file identifier) (4 bytes)
 - File Name (260 bytes)
 - file size (8 bytes)
@@ -42,4 +43,4 @@ Coding a network protocol in C++ to improve my understanding of networks
 ### Total Packet 1
 - 1343 bytes
 ### Total remaining Packets
-- 1093 bytes
+- 1089 bytes
