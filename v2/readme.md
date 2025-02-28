@@ -3,9 +3,11 @@ Coding a network protocol in C++ to improve my understanding of networks
 
 # Structure
 
-Send packet 1, wait for ACK, once receaved encrypt data with public key receaved from sender, send rest of packets
-Once all packets receaved print all of the packet numbers receaved, and all that are not if any are missing then request the data from the other using a NACK and rhen the client resends any missinfg packets
-
+should only be 1 cpp file called client-sever.cpp and one.h file called packet.h.
+send packet 1 with the toal packets, then on the next packerts dont send it to reduce packet overhead.
+when each packet is reaceaved, take in the packet number and save it to an arry, if any packets are missing at the end sent a NACK packet with all of the missing packets.
+If any of the checksums fail request them back with another NACK.
+the client should wait untill a final ACK packet will all of the packets are receaved.
 
 ## Header
 - Source IP (4 bytes)
@@ -13,10 +15,9 @@ Once all packets receaved print all of the packet numbers receaved, and all that
 - Version (1 byte) // this should be 2 for now
 - Packet Number (4 bytes)
 - Total Packets (4 bytes) // only transmitted with packet 1
-- Public key (32 bytes) // only transmitted with packet 1
 
 ## Body 
-- Contents (1024 bytes) // NOT SENT WITH PACKET 1
+- Contents (1024 bytes)
 
 ## Footer 
 - Checksum (4 bytes)
