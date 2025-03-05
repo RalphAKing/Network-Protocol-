@@ -1,4 +1,4 @@
-# Network-Protocol-
+# Network-Protocol- V2
 Coding a network protocol in C++ to improve my understanding of networks
 
 # Structure
